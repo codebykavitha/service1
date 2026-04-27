@@ -1,0 +1,33 @@
+name: Microservices CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [user-service, product-service, order-service]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+
+    - name: Install dependencies and test
+      run: |
+        cd ${{ matrix.service }}
+        npm install
+        # npm test (commented out as there are no actual tests in this mock)
+        
+    - name: Build Docker Image
+      run: |
+        cd ${{ matrix.service }}
+        docker build -t dummy-${{ matrix.service }}-image .
