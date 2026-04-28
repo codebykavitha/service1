@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t localhost:5000/service ./service'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                bat 'docker push localhost:5000/service'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                bat 'kubectl apply -f kubernetes/service.yaml'
+            }
+        }
+
+        stage('Check Pods') {
+            steps {
+                bat 'kubectl get pods'
+            }
+        }
+    }
+}
